@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unlock iPhone - Enviar Texto Simples</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter para todo o corpo */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Efeito de brilho para elementos específicos, com cor verde neon */
+        .neon-glow-text {
+            text-shadow: 0 0 5px rgba(190, 242, 114, 0.7), 0 0 10px rgba(190, 242, 114, 0.5), 0 0 15px rgba(190, 242, 114, 0.3);
+        }
+        .neon-glow-button {
+            box-shadow: 0 0 8px rgba(190, 242, 114, 0.7); /* Cor do brilho verde neon */
+        }
+    </style>
+</head>
+<!-- Fundo: Preto com um toque de verde neon, igual ao painel de carrossel -->
+<body class="bg-gradient-to-br from-gray-950 via-black to-lime-950 min-h-screen flex items-center justify-center p-4">
+    <div class="container bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-xl transform transition-all duration-300 hover:scale-105 border border-lime-400 neon-glow-button">
+        <h2 class="text-3xl font-extrabold text-center text-lime-300 mb-6 drop-shadow-lg neon-glow-text">Enviar Texto Simples</h2>
+        <p class="text-center text-lime-300 mb-8">Envie uma mensagem de texto rápida para qualquer número.</p>
+
+        <div class="space-y-4">
+            <div>
+                <label for="phone" class="block text-sm font-medium text-lime-300 mb-1">Número do Cliente (com DDI, sem +):</label>
+                <input type="text" id="phone" placeholder="Ex: 5511999999999"
+                       class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-lime-400 focus:border-lime-400 transition duration-150 ease-in-out shadow-sm" />
+            </div>
+
+            <div>
+                <label for="message" class="block text-sm font-medium text-lime-300 mb-1">Mensagem de Texto:</label>
+                <textarea id="message" rows="3" placeholder="Digite sua mensagem de teste..."
+                          class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-lime-400 focus:border-lime-400 transition duration-150 ease-in-out shadow-sm"></textarea>
+            </div>
+        </div>
+
+        <button onclick="sendSimpleText()"
+                class="w-full py-3 bg-lime-600 text-white font-bold rounded-lg shadow-lg hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-opacity-75 transition duration-150 ease-in-out mt-8 text-lg neon-glow-button">
+            Enviar Texto
+        </button>
+
+        <div id="log" class="mt-8 p-4 bg-gray-700 rounded-lg border border-gray-600 text-lime-300 text-sm whitespace-pre-wrap overflow-x-auto shadow-inner"></div>
+    </div>
+
+    <script>
+        // ATENÇÃO: Esta URL precisa ser a URL REAL do seu proxy hospedado no Render.com.
+        // SUBSTITUA 'URL_DO_SEU_PROXY_HOSPEDADO_AQUI' pela URL que o Render te deu (ex: 'https://painel-whatsapp-proxy-api.onrender.com')
+        // OU, para teste LOCAL, use: 'http://localhost:3001' (a nova porta do seu proxy)
+        const proxyBaseUrl = 'http://localhost:3000'; // AGORA APONTA PARA A PORTA 3001 PARA TESTE LOCAL
+        const proxyUrl = `${proxyBaseUrl}/send-simple-text`; 
+
+        async function sendSimpleText() {
+            const phone = document.getElementById('phone').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const log = document.getElementById('log');
+
+            if (!phone || !message) {
+                log.innerText = '❌ Por favor, preencha o número e a mensagem.';
+                return;
+            }
+
+            const payload = {
+                phone: phone,
+                message: message
+            };
+
+            try {
+                log.innerText = 'Enviando texto simples...';
+                const response = await fetch(proxyUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    log.innerText = '✅ Texto enviado com sucesso:\n' + JSON.stringify(data, null, 2);
+                } else {
+                    log.innerText = '❌ Erro ao enviar texto:\n' + JSON.stringify(data, null, 2);
+                    console.error('Erro na resposta do proxy:', data);
+                }
+            } catch (error) {
+                log.innerText = '❌ Erro de conexão com o proxy:\n' + error.message;
+                console.error('Erro de rede ou proxy:', error);
+            }
+        }
+    </script>
+</body>
+</html>
