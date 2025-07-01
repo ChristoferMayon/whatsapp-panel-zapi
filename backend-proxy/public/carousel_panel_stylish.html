@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unlock iPhone - Enviar Carrossel</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter para todo o corpo */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Efeito de brilho para elementos específicos, com cor verde neon */
+        .neon-glow-text {
+            text-shadow: 0 0 5px rgba(190, 242, 114, 0.7), 0 0 10px rgba(190, 242, 114, 0.5), 0 0 15px rgba(190, 242, 114, 0.3);
+        }
+        .neon-glow-button {
+            box-shadow: 0 0 8px rgba(190, 242, 114, 0.7); /* Cor do brilho verde neon */
+        }
+    </style>
+</head>
+<!-- Fundo: Preto com um toque de verde neon -->
+<body class="bg-gradient-to-br from-gray-950 via-black to-lime-950 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 hover:scale-105 border border-lime-400 neon-glow-button">
+        <div class="flex justify-center items-center mb-6">
+            <!-- Imagem do logo -->
+            <img src="https://raw.githubusercontent.com/ChristoferMayon/images/2e372f3644d8e31ebcf4af2d1a2b7c70af0ae478/WhatsApp%20Image%202025-06-27%20at%2021.56.04.jpeg" 
+                 alt="Logo Unlock iPhone" 
+                 class="h-24 w-auto object-contain rounded-lg shadow-lg">
+        </div>
+        <p class="text-center text-lime-300 mb-8">Envie mensagens carrossel com estilo!</p>
+
+        <!-- NOVO LINK AQUI -->
+        <div class="text-center mb-6">
+            <a href="test_send_text.html" class="inline-block px-6 py-2 bg-lime-600 text-white font-semibold rounded-lg shadow-md hover:bg-lime-700 transition duration-150 ease-in-out neon-glow-button">
+                Ir para Teste de Envio de Texto Simples
+            </a>
+        </div>
+        <!-- FIM DO NOVO LINK -->
+
+        <div class="space-y-4">
+            <div>
+                <label for="numero" class="block text-sm font-medium text-lime-300 mb-1">Número do Cliente (com DDI, sem +):</label>
+                <input type="text" id="numero" placeholder="Ex: 5511999999999"
+                       class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-lime-400 focus:border-lime-400 transition duration-150 ease-in-out shadow-sm" />
+            </div>
+
+            <div>
+                <label for="mensagemGeral" class="block text-sm font-medium text-lime-300 mb-1">Mensagem Geral do Carrossel:</label>
+                <textarea id="mensagemGeral" rows="2" placeholder="Digite o texto principal do carrossel (antes dos cartões)..."
+                          class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-lime-400 focus:border-lime-400 transition duration-150 ease-in-out shadow-sm"></textarea>
+            </div>
+
+            <div>
+                <label for="delayMessage" class="block text-sm font-medium text-lime-300 mb-1">Atraso entre mensagens (segundos, opcional, 1-15):</label>
+                <input type="number" id="delayMessage" min="1" max="15" placeholder="Ex: 5"
+                       class="w-full px-4 py-2 border border-gray-600 rounded-lg bg-gray-700 text-white focus:ring-lime-400 focus:border-lime-400 transition duration-150 ease-in-out shadow-sm" />
+            </div>
+        </div>
+
+        <h3 class="text-xl font-semibold text-lime-300 mt-8 mb-4">Cartões do Carrossel</h3>
+        <div id="carousel-cards-container" class="space-y-6">
+            <!-- Cartões serão adicionados aqui pelo JS -->
+        </div>
+        <button class="add-card-btn w-full py-2 bg-lime-400 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-lime-500 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-opacity-75 transition duration-150 ease-in-out mt-6 neon-glow-button"
+                onclick="addCarouselCard()">
+            + Adicionar Cartão
+        </button>
+
+        <button onclick="enviarCarrossel()"
+                class="w-full py-3 bg-lime-600 text-white font-bold rounded-lg shadow-lg hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-opacity-75 transition duration-150 ease-in-out mt-8 text-lg neon-glow-button">
+            Enviar Carrossel
+        </button>
+
+        <div id="log" class="mt-8 p-4 bg-gray-700 rounded-lg border border-gray-600 text-lime-300 text-sm whitespace-pre-wrap overflow-x-auto shadow-inner"></div>
+    </div>
+
+    <script src="carousel_script_new.js"></script>
+</body>
+</html>

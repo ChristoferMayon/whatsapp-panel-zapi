@@ -23,9 +23,11 @@ console.log("- ZAPI_ACCOUNT_SECURITY_TOKEN (no cabeçalho):", ZAPI_ACCOUNT_SECUR
 console.log("- ZAPI_INSTANCE_PATH_TOKEN (na URL):", ZAPI_INSTANCE_PATH_TOKEN ? "Carregado" : "NÃO CARREGADO");
 console.log("-----------------------------------------");
 
-// CORS Configuration: Permite requisições da origem específica do seu frontend local
-// EM PRODUÇÃO, esta origem deve ser a URL do seu GitHub Pages (ex: 'https://seu-usuario.github.io')
+// CORS Configuration: Permite requisições da origem específica do seu frontend
+// IMPORTANTE: SUBSTITUA 'https://seu-usuario.github.io' pela URL BASE REAL do seu GitHub Pages!
+// NÃO inclua o nome do repositório aqui, apenas o domínio base.
 app.use(cors({
+    origin: 'https://seu-usuario.github.io' // EX: 'https://christofermayon.github.io'
 }));
 
 // Middleware para analisar corpos de requisição JSON
@@ -104,7 +106,7 @@ app.post('/send-carousel-message', async (req, res) => {
                 return res.status(400).json({ error: 'Cada cartão do carrossel deve ter "text" e "image".' });
             }
             if (card.buttons && !Array.isArray(card.buttons)) {
-                 return res.status(400).json({ error: 'Os botões de um cartão devem ser um array.' });
+                return res.status(400).json({ error: 'Os botões de um cartão devem ser um array.' });
             }
         }
 
