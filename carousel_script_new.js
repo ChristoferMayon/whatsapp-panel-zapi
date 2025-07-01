@@ -1,6 +1,5 @@
-// ATENÇÃO: Esta URL precisa ser a URL REAL do seu proxy hospedado no Render.com.
-// SUBSTITUA 'URL_DO_SEU_PROXY_HOSPEDADO_AQUI' pela URL que o Render te deu (ex: 'https://painel-whatsapp-proxy-api.onrender.com')
-const proxyBaseUrl = 'URL_DO_SEU_PROXY_HOSPEDADO_AQUI'; // <--- SUBSTITUA AQUI PELA URL DO SEU RENDER.COM
+// ATENÇÃO: Esta URL é a URL REAL do seu proxy hospedado no Render.com.
+const proxyBaseUrl = 'https://proxy-zapi-christofer.onrender.com'; // URL do seu proxy no Render.com
 const proxyCarouselUrl = `${proxyBaseUrl}/send-carousel-message`;
 
 let cardCounter = 0; // Para dar IDs únicos aos cartões
