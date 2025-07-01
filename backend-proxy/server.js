@@ -23,11 +23,9 @@ console.log("- ZAPI_ACCOUNT_SECURITY_TOKEN (no cabeçalho):", ZAPI_ACCOUNT_SECUR
 console.log("- ZAPI_INSTANCE_PATH_TOKEN (na URL):", ZAPI_INSTANCE_PATH_TOKEN ? "Carregado" : "NÃO CARREGADO");
 console.log("-----------------------------------------");
 
-// CORS Configuration: Permite requisições da origem específica do seu frontend
-// IMPORTANTE: SUBSTITUA 'https://seu-usuario.github.io' pela URL BASE REAL do seu GitHub Pages!
-// NÃO inclua o nome do repositório aqui, apenas o domínio base.
+// CORS Configuration: Permite requisições da origem específica do seu frontend no GitHub Pages
 app.use(cors({
-    origin: 'https://seu-usuario.github.io' // EX: 'https://christofermayon.github.io'
+    origin: 'https://christofermayon.github.io' // URL BASE do seu GitHub Pages
 }));
 
 // Middleware para analisar corpos de requisição JSON
