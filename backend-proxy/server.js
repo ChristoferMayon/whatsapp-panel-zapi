@@ -57,7 +57,7 @@ app.post('/send-whatsapp-message', async (req, res) => {
         };
 
         // URL da API da Z-API para enviar mensagens com botões
-        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-button-actions`;
+        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/send-carousel`; // Adapte ao endpoint de carrossel do Z-API
 
         const zapiResponse = await fetch(zapiApiUrl, {
             method: "POST",
