@@ -38,6 +38,10 @@ app.post('/send-whatsapp-message', async (req, res) => {
     try {
         const { numero, mensagem, tituloBotao, linkBotao } = req.body;
 
+        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Botão) ---
+        console.log("Payload recebido do frontend (send-whatsapp-message):", JSON.stringify(req.body, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         if (!numero || !mensagem || !tituloBotao || !linkBotao) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios para enviar a mensagem com botão.' });
         }
@@ -56,19 +60,29 @@ app.post('/send-whatsapp-message', async (req, res) => {
             ]
         };
 
+        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Botão) ---
+        console.log("Payload enviado para a Z-API (send-whatsapp-message):", JSON.stringify(payloadParaZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         // URL da API da Z-API para enviar mensagens com botões
-        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/send-multi-carousel`; // Adapte ao endpoint de carrossel do Z-API
+        // ATENÇÃO: Verifique se este endpoint é o correto para "send-multi-carousel"
+        // com o payload de "buttonActions". A documentação que você enviou era para "send-carousel".
+        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-multi-carousel`; 
 
         const zapiResponse = await fetch(zapiApiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN // Token de SEGURANÇA da CONTA no cabeçalho
+                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN 
             },
             body: JSON.stringify(payloadParaZapi)
         });
 
         const dataFromZapi = await zapiResponse.json();
+
+        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Botão) ---
+        console.log("Resposta da Z-API (send-whatsapp-message):", JSON.stringify(dataFromZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
 
         if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
@@ -94,6 +108,10 @@ app.post('/send-carousel-message', async (req, res) => {
     try {
         const { phone, message, carousel, delayMessage } = req.body;
 
+        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Carrossel) ---
+        console.log("Payload recebido do frontend (send-carousel-message):", JSON.stringify(req.body, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         if (!phone || !message || !carousel || !Array.isArray(carousel) || carousel.length === 0) {
             return res.status(400).json({ error: 'Campos "phone", "message" e "carousel" (array não vazio) são obrigatórios para enviar carrossel.' });
         }
@@ -108,14 +126,20 @@ app.post('/send-carousel-message', async (req, res) => {
             }
         }
 
+        // ESTE É O PAYLOAD QUE ESTÁ FUNCIONANDO NO SEU OUTRO PAINEL
         const payloadParaZapi = {
             phone: phone,
-            message: message,
-            carousel: carousel,
-            ...(delayMessage && { delayMessage: delayMessage }) // Adiciona delayMessage se existir
+            message: message, // Campo 'message' presente
+            carousel: carousel, // Array 'carousel' presente
+            ...(delayMessage && { delayMessage: delayMessage }) 
         };
 
+        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Carrossel) ---
+        console.log("Payload enviado para a Z-API (send-carousel-message):", JSON.stringify(payloadParaZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         // URL da API da Z-API para enviar mensagens carrossel
+        // ATENÇÃO: Esta URL usa o ZAPI_INSTANCE_PATH_TOKEN na URL.
         const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-carousel`;
 
         const zapiResponse = await fetch(zapiApiUrl, {
@@ -128,6 +152,10 @@ app.post('/send-carousel-message', async (req, res) => {
         });
 
         const dataFromZapi = await zapiResponse.json();
+
+        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Carrossel) ---
+        console.log("Resposta da Z-API (send-carousel-message):", JSON.stringify(dataFromZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
 
         if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
@@ -151,7 +179,11 @@ app.post('/send-carousel-message', async (req, res) => {
 // ==============================================================================
 app.post('/send-simple-text', async (req, res) => {
     try {
-        const { phone, message } = req.body; // Apenas telefone e mensagem para send-text
+        const { phone, message } = req.body; 
+
+        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Texto Simples) ---
+        console.log("Payload recebido do frontend (send-simple-text):", JSON.stringify(req.body, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
 
         if (!phone || !message) {
             return res.status(400).json({ error: 'Campos "phone" e "message" são obrigatórios para enviar texto simples.' });
@@ -162,6 +194,10 @@ app.post('/send-simple-text', async (req, res) => {
             message: message
         };
 
+        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Texto Simples) ---
+        console.log("Payload enviado para a Z-API (send-simple-text):", JSON.stringify(payloadParaZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         // URL da API da Z-API para enviar TEXTO SIMPLES
         const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-text`;
 
@@ -169,12 +205,16 @@ app.post('/send-simple-text', async (req, res) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN // Token de SEGURANÇA da CONTA no cabeçalho
+                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN 
             },
             body: JSON.stringify(payloadParaZapi)
         });
 
         const dataFromZapi = await zapiResponse.json();
+
+        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Texto Simples) ---
+        console.log("Resposta da Z-API (send-simple-text):", JSON.stringify(dataFromZapi, null, 2));
+        // --- FIM DA ADIÇÃO DE LOG ---
 
         if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
