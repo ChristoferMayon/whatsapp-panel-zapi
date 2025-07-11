@@ -17,13 +17,13 @@ function addCarouselCard() {
             <div>
                 <label for="card-text-${cardCounter}" class="block text-sm font-medium text-gray-700 mb-1">Texto do Cartão:</label>
                 <textarea id="card-text-${cardCounter}" rows="2" placeholder="Texto para este cartão"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm"></textarea>
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm"></textarea>
             </div>
 
             <div>
                 <label for="card-image-${cardCounter}" class="block text-sm font-medium text-gray-700 mb-1">URL da Imagem do Cartão:</label>
                 <input type="url" id="card-image-${cardCounter}" placeholder="https://exemplo.com/imagem.jpg"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
             </div>
         </div>
         
@@ -33,11 +33,11 @@ function addCarouselCard() {
         </div>
         <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
             <button class="add-button-btn flex-grow py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75 transition duration-150 ease-in-out"
-                            onclick="addCardButton(${cardCounter})">
+                                 onclick="addCardButton(${cardCounter})">
                 + Adicionar Botão
             </button>
             <button class="remove-card-btn flex-grow py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition duration-150 ease-in-out"
-                            onclick="removeCarouselCard(${cardCounter})">
+                                 onclick="removeCarouselCard(${cardCounter})">
                 - Remover Cartão
             </button>
         </div>
@@ -59,7 +59,7 @@ function addCardButton(cardId) {
             <div>
                 <label for="button-type-${cardId}-${buttonIndex}" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Botão:</label>
                 <select id="button-type-${cardId}-${buttonIndex}" onchange="toggleButtonFields(${cardId}, ${buttonIndex})"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm">
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm">
                     <option value="URL">URL</option>
                     <option value="REPLY">Resposta Rápida</option>
                     <option value="CALL">Ligar</option>
@@ -69,18 +69,18 @@ function addCardButton(cardId) {
             <div>
                 <label for="button-label-${cardId}-${buttonIndex}" class="block text-sm font-medium text-gray-700 mb-1">Texto do Botão:</label>
                 <input type="text" id="button-label-${cardId}-${buttonIndex}" placeholder="Ex: Saiba Mais"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
             </div>
             
             <div id="button-url-field-${cardId}-${buttonIndex}" class="button-field">
                 <label for="button-url-${cardId}-${buttonIndex}" class="block text-sm font-medium text-gray-700 mb-1">URL:</label>
                 <input type="url" id="button-url-${cardId}-${buttonIndex}" placeholder="https://exemplo.com/link"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
             </div>
             <div id="button-phone-field-${cardId}-${buttonIndex}" class="button-field hidden">
                 <label for="button-phone-${cardId}-${buttonIndex}" class="block text-sm font-medium text-gray-700 mb-1">Número de Telefone (com DDI, sem +):</label>
                 <input type="text" id="button-phone-${cardId}-${buttonIndex}" placeholder="Ex: 5511999999999"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
+                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm" />
             </div>
             <input type="hidden" id="button-id-${cardId}-${buttonIndex}" value="btn_${cardId}_${buttonIndex}" />
         </div>
@@ -211,6 +211,11 @@ async function enviarCarrossel() {
         payload.delayMessage = parseInt(delayMessage);
     }
 
+    // --- ADIÇÃO DE LOG NO FRONTEND ---
+    console.log("--- Painel que FUNCIONA (Frontend) ---");
+    console.log("Payload enviado para o proxy/API:", JSON.stringify(payload, null, 2)); // LINHA COM LOG
+    // --- FIM DA ADIÇÃO DE LOG ---
+
     try {
         log.innerText = 'Enviando carrossel...';
         const response = await fetch(proxyCarouselUrl, {
@@ -223,15 +228,19 @@ async function enviarCarrossel() {
 
         const data = await response.json();
 
+        // --- ADIÇÃO DE LOG NO FRONTEND (Resposta) ---
+        console.log("Resposta recebida do proxy/API (Painel que FUNCIONA):", JSON.stringify(data, null, 2)); // LINHA COM LOG
+        // --- FIM DA ADIÇÃO DE LOG ---
+
         if (response.ok) {
             log.innerText = '✅ Carrossel enviado com sucesso:\n' + JSON.stringify(data, null, 2);
         } else {
             log.innerText = '❌ Erro ao enviar carrossel:\n' + JSON.stringify(data, null, 2);
-            console.error('Erro na resposta do proxy:', data);
+            console.error('Erro na resposta do proxy/API (Painel que FUNCIONA):', data); // LINHA COM LOG
         }
     } catch (error) {
-        log.innerText = '❌ Erro de conexão com o proxy:\n' + error.message;
-        console.error('Erro de rede ou proxy:', error);
+        log.innerText = '❌ Erro de conexão com o proxy/API (Painel que FUNCIONA):\n' + error.message;
+        console.error('Erro de rede ou proxy/API (Painel que FUNCIONA):', error); // LINHA COM LOG
     }
 }
 
