@@ -1,7 +1,7 @@
+
 const express = require('express');
 require('dotenv').config(); // Carrega variáveis do arquivo .env
 const cors = require('cors');
-const axios = require('axios'); // Adicionado axios, pois o fetch nativo do Node pode precisar de polyfill ou ser substituído por axios para consistência.
 
 const app = express();
 // A porta para o servidor. Usa a porta do ambiente de hospedagem (Render) ou 3001 localmente.
@@ -39,11 +39,6 @@ app.post('/send-whatsapp-message', async (req, res) => {
     try {
         const { numero, mensagem, tituloBotao, linkBotao } = req.body;
 
-        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Botão) ---
-        console.log("--- ROTA /send-whatsapp-message ---");
-        console.log("Payload recebido do frontend:", JSON.stringify(req.body, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
         if (!numero || !mensagem || !tituloBotao || !linkBotao) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios para enviar a mensagem com botão.' });
         }
@@ -62,30 +57,21 @@ app.post('/send-whatsapp-message', async (req, res) => {
             ]
         };
 
-        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Botão) ---
-        console.log("Payload enviado para a Z-API:", JSON.stringify(payloadParaZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
         // URL da API da Z-API para enviar mensagens com botões
-        // ATENÇÃO: Verifique se este endpoint é o correto para "send-multi-carousel"
-        // com o payload de "buttonActions". A documentação que você enviou era para "send-carousel".
-        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/send-multi-carousel`; 
+        const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/send-multi-carousel`; // Adapte ao endpoint de carrossel do Z-API
 
-        // Usando axios para consistência, já que foi adicionado no projeto principal
-        const zapiResponse = await axios.post(zapiApiUrl, payloadParaZapi, {
+        const zapiResponse = await fetch(zapiApiUrl, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN // Token de SEGURANÇA da CONTA no cabeçalho
-            }
+            },
+            body: JSON.stringify(payloadParaZapi)
         });
 
-        const dataFromZapi = zapiResponse.data; // Axios retorna data diretamente
+        const dataFromZapi = await zapiResponse.json();
 
-        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Botão) ---
-        console.log("Resposta da Z-API (sucesso):", JSON.stringify(dataFromZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
-        if (zapiResponse.status >= 200 && zapiResponse.status < 300) { // Verifica se o status é de sucesso
+        if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
         } else {
             console.error('Erro retornado pela Z-API (send-button-actions):', dataFromZapi);
@@ -97,10 +83,8 @@ app.post('/send-whatsapp-message', async (req, res) => {
         }
 
     } catch (error) {
-        // --- ADIÇÃO DE LOG (Erro da Z-API - Rota de Botão) ---
-        console.error('Erro interno no servidor proxy ao processar send-button-actions:', error.response ? error.response.data : error.message);
-        // --- FIM DA ADIÇÃO DE LOG ---
-        res.status(error.response ? error.response.status : 500).json({ error: 'Erro interno do servidor', message: error.message });
+        console.error('Erro interno no servidor proxy ao processar send-button-actions:', error);
+        res.status(500).json({ error: 'Erro interno do servidor', message: error.message });
     }
 });
 
@@ -110,11 +94,6 @@ app.post('/send-whatsapp-message', async (req, res) => {
 app.post('/send-carousel-message', async (req, res) => {
     try {
         const { phone, message, carousel, delayMessage } = req.body;
-
-        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Carrossel) ---
-        console.log("--- ROTA /send-carousel-message ---");
-        console.log("Payload recebido do frontend:", JSON.stringify(req.body, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
 
         if (!phone || !message || !carousel || !Array.isArray(carousel) || carousel.length === 0) {
             return res.status(400).json({ error: 'Campos "phone", "message" e "carousel" (array não vazio) são obrigatórios para enviar carrossel.' });
@@ -137,28 +116,21 @@ app.post('/send-carousel-message', async (req, res) => {
             ...(delayMessage && { delayMessage: delayMessage }) // Adiciona delayMessage se existir
         };
 
-        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Carrossel) ---
-        console.log("Payload enviado para a Z-API:", JSON.stringify(payloadParaZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
         // URL da API da Z-API para enviar mensagens carrossel
         const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-carousel`;
 
-        // Usando axios para consistência
-        const zapiResponse = await axios.post(zapiApiUrl, payloadParaZapi, {
+        const zapiResponse = await fetch(zapiApiUrl, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN // Token de SEGURANÇA da CONTA no cabeçalho
-            }
+            },
+            body: JSON.stringify(payloadParaZapi)
         });
 
-        const dataFromZapi = zapiResponse.data; // Axios retorna data diretamente
+        const dataFromZapi = await zapiResponse.json();
 
-        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Carrossel) ---
-        console.log("Resposta da Z-API (sucesso):", JSON.stringify(dataFromZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
-        if (zapiResponse.status >= 200 && zapiResponse.status < 300) { // Verifica se o status é de sucesso
+        if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
         } else {
             console.error('Erro retornado pela Z-API (send-carousel):', dataFromZapi);
@@ -170,10 +142,8 @@ app.post('/send-carousel-message', async (req, res) => {
         }
 
     } catch (error) {
-        // --- ADIÇÃO DE LOG (Erro da Z-API - Rota de Carrossel) ---
-        console.error('Erro interno no servidor proxy ao processar send-carousel:', error.response ? error.response.data : error.message);
-        // --- FIM DA ADIÇÃO DE LOG ---
-        res.status(error.response ? error.response.status : 500).json({ error: 'Erro interno do servidor', message: error.message });
+        console.error('Erro interno no servidor proxy ao processar send-carousel:', error);
+        res.status(500).json({ error: 'Erro interno do servidor', message: error.message });
     }
 });
 
@@ -182,12 +152,7 @@ app.post('/send-carousel-message', async (req, res) => {
 // ==============================================================================
 app.post('/send-simple-text', async (req, res) => {
     try {
-        const { phone, message } = req.body; 
-
-        // --- ADIÇÃO DE LOG (Payload recebido do frontend - Rota de Texto Simples) ---
-        console.log("--- ROTA /send-simple-text ---");
-        console.log("Payload recebido do frontend:", JSON.stringify(req.body, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
+        const { phone, message } = req.body; // Apenas telefone e mensagem para send-text
 
         if (!phone || !message) {
             return res.status(400).json({ error: 'Campos "phone" e "message" são obrigatórios para enviar texto simples.' });
@@ -198,28 +163,21 @@ app.post('/send-simple-text', async (req, res) => {
             message: message
         };
 
-        // --- ADIÇÃO DE LOG (Payload enviado para Z-API - Rota de Texto Simples) ---
-        console.log("Payload enviado para a Z-API:", JSON.stringify(payloadParaZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
         // URL da API da Z-API para enviar TEXTO SIMPLES
         const zapiApiUrl = `https://api.z-api.io/instances/${ZAPI_INSTANCE_ID}/token/${ZAPI_INSTANCE_PATH_TOKEN}/send-text`;
 
-        // Usando axios para consistência
-        const zapiResponse = await axios.post(zapiApiUrl, payloadParaZapi, {
+        const zapiResponse = await fetch(zapiApiUrl, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN 
-            }
+                "Client-Token": ZAPI_ACCOUNT_SECURITY_TOKEN // Token de SEGURANÇA da CONTA no cabeçalho
+            },
+            body: JSON.stringify(payloadParaZapi)
         });
 
-        const dataFromZapi = zapiResponse.data; // Axios retorna data diretamente
+        const dataFromZapi = await zapiResponse.json();
 
-        // --- ADIÇÃO DE LOG (Resposta da Z-API - Rota de Texto Simples) ---
-        console.log("Resposta da Z-API (sucesso):", JSON.stringify(dataFromZapi, null, 2));
-        // --- FIM DA ADIÇÃO DE LOG ---
-
-        if (zapiResponse.status >= 200 && zapiResponse.status < 300) { // Verifica se o status é de sucesso
+        if (zapiResponse.ok) {
             res.status(zapiResponse.status).json(dataFromZapi);
         } else {
             console.error('Erro retornado pela Z-API (send-text):', dataFromZapi);
@@ -231,10 +189,8 @@ app.post('/send-simple-text', async (req, res) => {
         }
 
     } catch (error) {
-        // --- ADIÇÃO DE LOG (Erro da Z-API - Rota de Texto Simples) ---
-        console.error('Erro interno no servidor proxy ao processar send-text:', error.response ? error.response.data : error.message);
-        // --- FIM DA ADIÇÃO DE LOG ---
-        res.status(error.response ? error.response.status : 500).json({ error: 'Erro interno do servidor', message: error.message });
+        console.error('Erro interno no servidor proxy ao processar send-text:', error);
+        res.status(500).json({ error: 'Erro interno do servidor', message: error.message });
     }
 });
 
